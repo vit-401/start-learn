@@ -45,6 +45,12 @@ productsRoute.delete('/:id', async (req: Request, res: Response) => {
   if (product) return res.status(200).json(product)
   else return res.status(400).json('Error')
 })
+productsRoute.delete('/', async (req: Request, res: Response) => {
+  const {id} = req.params
+  let product = await repo.deleteAllProduct()
+  if (product) return res.status(200).json(product)
+  else return res.status(400).json('Error')
+})
 
 
 export default productsRoute

@@ -1,12 +1,12 @@
-import {client} from "./db";
-import {Collection, Db, ObjectId} from "mongodb";
+import {db} from "./db";
+import {Collection, ObjectId} from "mongodb";
 
 type Product = {
   _id?: ObjectId;
   title: string;
   price: number;
 };
-const productCollection: Collection<Product> = client.db("myNewDatabase").collection('videos')
+const productCollection: Collection<Product> = db.collection('videos')
 
 class ProductRepository {
   private productCollection: Collection<Product>;
@@ -41,13 +41,26 @@ class ProductRepository {
       throw new Error('Product not found');
     }
 
-    return updatedProduct;
+    return await this.getProductById(id);
   }
 
   // Delete an existing product from the repository
   async deleteProduct(id: string): Promise<Product[]> {
     const objectId = new ObjectId(id);
     const result = await this.productCollection.deleteOne({_id: objectId});
+
+    if (result.deletedCount === 0) {
+      throw new Error('Product not found');
+    }
+
+    const products = await this.productCollection.find().toArray();
+    return products;
+  }
+
+  // Delete an existing product from the repository
+  async deleteAllProduct(): Promise<Product[]> {
+
+    const result = await this.productCollection.deleteMany({});
 
     if (result.deletedCount === 0) {
       throw new Error('Product not found');
