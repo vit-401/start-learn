@@ -3,6 +3,7 @@ import {body, validationResult} from "express-validator";
 
 const validateTitleAndPrice = [
   body('title')
+    .isString().withMessage('title must be string')
     .trim()
     .isLength({min: 3, max: 35})
     .withMessage('Title must be between 3 and 35 characters long'),
