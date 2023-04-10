@@ -5,6 +5,8 @@ export const client = new MongoClient(uri);
 
 export default async function runDB() {
 
+
+
   try {
     await client.connect();
     console.log('Connected to MongoDB database');
