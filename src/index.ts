@@ -1,7 +1,7 @@
 import express from 'express'
 import productsRoute from "./routes/protucts";
 import addressesRouter from "./routes/addresses";
-import runDB from "./repository/db";
+import runDB from "./db";
 import errorHandler from "./middleware/errorHandler";
 
 const bodyParser = require('body-parser')

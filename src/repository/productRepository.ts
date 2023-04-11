@@ -1,7 +1,7 @@
-import {db} from "./db";
+import {db} from "../db";
 import {Collection, ObjectId} from "mongodb";
 
-type Product = {
+export type Product = {
   _id?: ObjectId;
   title: string;
   price: number;
