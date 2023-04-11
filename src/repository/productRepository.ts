@@ -24,7 +24,6 @@ class ProductRepository {
 
     const result = await this.productCollection.insertOne(product)
     const insertedProduct = await this.getProductById(result.insertedId.toString())
-    // const newProduct = result.ops[0] as Product;
     return insertedProduct;
   }
 
