@@ -1,17 +1,18 @@
 import {NextFunction, Request, Response, Router} from "express";
-import productService from "../service/productService";
 import validateTitleAndPrice from "../middleware/validateTitleAndPrice";
+import {ProductService} from "../service/productService";
 
-const productsRoute = Router({})
+const router = Router({})
+const productsRoute = (productService:ProductService)=>{
 
-productsRoute.get('/:id', async (req: Request, res: Response) => {
+  router.get('/:id', async (req: Request, res: Response) => {
   const {id} = req.params
   let productById = await productService.getProductById(id)
 
   if (productById) return res.status(200).json(productById)
   else return res.status(404).json('not found')
 })
-productsRoute.get('/', async (req: Request, res: Response) => {
+  router.get('/', async (req: Request, res: Response) => {
   const {search, limit, page,sort} = req.query
   let response = await productService.getAllProducts(search?.toString(), limit?.toString(), page?.toString(),sort?.toString())
 
@@ -19,7 +20,7 @@ productsRoute.get('/', async (req: Request, res: Response) => {
   else return res.status(404).json('not found')
 
 })
-productsRoute.post('/', validateTitleAndPrice, async (req: Request, res: Response, next: NextFunction) => {
+  router.post('/', validateTitleAndPrice, async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const {title, price} = req.body
@@ -31,7 +32,7 @@ productsRoute.post('/', validateTitleAndPrice, async (req: Request, res: Respons
   }
 
 })
-productsRoute.put('/:id', validateTitleAndPrice, async (req: Request, res: Response) => {
+  router.put('/:id', validateTitleAndPrice, async (req: Request, res: Response) => {
   const {id} = req.params
   const {title, price} = req.body
   let product = await productService.updateProduct(id, {title, price})
@@ -39,17 +40,20 @@ productsRoute.put('/:id', validateTitleAndPrice, async (req: Request, res: Respo
   if (product) return res.status(200).json(product)
   else return res.status(400).json('Error')
 })
-productsRoute.delete('/:id', async (req: Request, res: Response) => {
+  router.delete('/:id', async (req: Request, res: Response) => {
   const {id} = req.params
   let product = await productService.deleteProduct(id)
   if (product) return res.status(200).json(product)
   else return res.status(400).json('Error')
 })
-productsRoute.delete('/', async (req: Request, res: Response) => {
+  router.delete('/', async (req: Request, res: Response) => {
   let product = await productService.deleteAllProduct()
   if (product) return res.status(200).json(product)
   else return res.status(400).json('Error')
 })
+
+  return router
+}
 
 
 export default productsRoute

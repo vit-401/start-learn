@@ -1,18 +1,14 @@
 import {db} from "../db";
 import {Collection, ObjectId} from "mongodb";
+import {Product} from "../models/product";
 
-export type Product = {
-  _id?: ObjectId;
-  title: string;
-  price: number;
-};
-const productCollection: Collection<Product> = db.collection('videos')
 
-class ProductRepository {
+
+export default class ProductRepository {
   private productCollection: Collection<Product>;
 
-  constructor(productCollection: Collection<Product>) {
-    this.productCollection = productCollection;
+  constructor() {
+    this.productCollection = db.collection('videos');
   }
 
   // Create a new product and add it to the repository
@@ -100,39 +96,5 @@ class ProductRepository {
   }
 }
 
-// Usage example:
-// const products = productCollection.find({})
-const repo = new ProductRepository(productCollection);
-//
-// try {
-//   const newProduct = repo.createProduct({id: '4', title: 'Product 4', price: 40});
-//   console.log('Created product:', newProduct);
-// } catch (error: any) {
-//   console.error('Error creating product:', error.message);
-// }
-//
-// try {
-//   const updatedProduct = repo.updateProduct('1', {title: 'New name', price: 15});
-//   console.log('Updated product:', updatedProduct);
-// } catch (error: any) {
-//   console.error('Error updating product:', error.message);
-// }
-//
-// try {
-//   repo.deleteProduct('2');
-//   console.log('Deleted product with ID 2');
-// } catch (error: any) {
-//   console.error('Error deleting product:', error.message);
-// }
-//
-// try {
-//   const product = repo.getProductById('3');
-//   console.log('Retrieved product:', product);
-// } catch (error: any) {
-//   console.error('Error retrieving product:', error.message);
-// }
-//
-export default repo
-//
-// const allProducts = repo.getAllProducts();
-// console.log('All products:', allProducts);
+
+
