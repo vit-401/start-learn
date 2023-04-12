@@ -39,8 +39,8 @@ class ProductService {
   }
 
   // Get all products from the repository
-  async getAllProducts(search?: string): Promise<Product[]> {
-    const products = await productRepository.getAllProducts(search);
+  async getAllProducts(search?: string, limit?:string, page?:string): Promise<Product[]> {
+    const products = await productRepository.getAllProducts(search,limit,page);
     return products;
   }
 }
