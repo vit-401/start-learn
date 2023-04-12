@@ -81,15 +81,21 @@ class ProductRepository {
   }
 
   // Get all products from the repository
-  async getAllProducts(search?: string, limit?: string, page?: string): Promise<Product[]> {
-    let query = {};
+  async getAllProducts(search?: string, limit?: string, page?: string, sort?: string): Promise<Product[]> {
+    let query: any = {};
     if (search) {
-      query = { title: { $regex: new RegExp(search, 'i') } };
+      query['title'] = {$regex: new RegExp(search, 'i')};
     }
     const perPage = limit ? parseInt(limit) : 10; // number of results per page, default 10
     const currentPage = page ? parseInt(page) : 1; // current page number, default 1
     const skip = (currentPage - 1) * perPage; // calculate number of results to skip
-    const products = await this.productCollection.find(query).skip(skip).limit(perPage).toArray();
+    const sortOrder = sort === 'desc' ? -1 : 1; // determine sort order, default ascending
+
+    const products = await this.productCollection.find(query)
+      .skip(skip)
+      .limit(perPage)
+      .sort({ title: sortOrder, price: sortOrder })
+      .toArray();
     return products;
   }
 }

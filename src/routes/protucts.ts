@@ -12,8 +12,8 @@ productsRoute.get('/:id', async (req: Request, res: Response) => {
   else return res.status(404).json('not found')
 })
 productsRoute.get('/', async (req: Request, res: Response) => {
-  const {search, limit, page} = req.query
-  let response = await productService.getAllProducts(search?.toString(), limit?.toString(), page?.toString())
+  const {search, limit, page,sort} = req.query
+  let response = await productService.getAllProducts(search?.toString(), limit?.toString(), page?.toString(),sort?.toString())
 
   if (response) return res.status(200).json(response)
   else return res.status(404).json('not found')
