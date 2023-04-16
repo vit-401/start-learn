@@ -1,11 +1,12 @@
 import bcrypt from 'bcrypt';
 import {User} from "../models/user";
 import UserRepository from "../repository/user-repository";
+import {jwtService} from "../jwt-service";
 
-export class UserService {
+export default class UserService {
   constructor(private userRepository: UserRepository) {}
 
-  async authenticate(email: string, password: string): Promise<User> {
+  async authenticate(email: string, password: string): Promise<string> {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
       throw new Error('User not found');
@@ -14,7 +15,9 @@ export class UserService {
     if (!isPasswordValid) {
       throw new Error('Invalid password');
     }
-    return user;
+    const token = jwtService.createJWT(user);
+    console.log(token)
+    return token;
   }
 
   async createUser(user: User): Promise<User> {

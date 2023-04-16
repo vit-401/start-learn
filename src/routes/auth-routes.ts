@@ -1,6 +1,6 @@
 import express from "express";
 import {User} from "../models/user";
-import { UserService } from '../service/user-service';
+import UserService from "../service/user-service";
 
 
 export function authRoutes(userService: UserService) {
