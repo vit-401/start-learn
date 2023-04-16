@@ -1,9 +1,9 @@
 import express from "express";
 import {User} from "../models/user";
-import UserService from "../service/user-service";
+import UserService from "../service/userService";
 
 
-export function authRoutes(userService: UserService) {
+export function authRouter(userService: UserService) {
   const router = express.Router();
 
   router.post('/login', async (req, res, next) => {

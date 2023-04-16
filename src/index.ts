@@ -1,10 +1,9 @@
 import express from 'express'
-import productsRoute from "./routes/protucts";
-import addressesRouter from "./routes/addresses";
+import productsRoute from "./routes/protuctRouter";
 import runDB from "./db";
 import errorHandler from "./middleware/errorHandler";
 import {ProductService} from "./service/productService";
-import {authRoutes} from "./routes/auth-routes";
+import {authRouter} from "./routes/authRouter";
 import UserRepository from "./repository/user-repository";
 import ProductRepository from "./repository/productRepository";
 import UserService from "./service/user-service";
@@ -29,9 +28,8 @@ const productService = new ProductService(productRepository)
 const userService = new UserService(userRepository)
 
 app.use(bodyParser.json());
-app.use('/auth', authRoutes(userService))
+app.use('/auth', authRouter(userService))
 app.use('/products',authMiddleware, productsRoute(productService))
-app.use('/addresses', addressesRouter)
 
 
 // Error handler middleware
