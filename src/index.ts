@@ -6,10 +6,11 @@ import {ProductService} from "./service/productService";
 import {authRouter} from "./routes/authRouter";
 import UserRepository from "./repository/user-repository";
 import ProductRepository from "./repository/productRepository";
-import UserService from "./service/user-service";
+import UserService from "./service/userService";
 import {authMiddleware} from "./middleware/authMiddleware";
 import {User} from "./models/user";
 import {ObjectId} from "mongodb";
+import {emailRouter} from "./routes/emailRouter";
 
 const bodyParser = require('body-parser')
 const app = express()
@@ -29,7 +30,8 @@ const userService = new UserService(userRepository)
 
 app.use(bodyParser.json());
 app.use('/auth', authRouter(userService))
-app.use('/products',authMiddleware, productsRoute(productService))
+app.use('/products', authMiddleware, productsRoute(productService))
+app.use('/email', authMiddleware, emailRouter)
 
 
 // Error handler middleware
