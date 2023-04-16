@@ -8,7 +8,6 @@ import UserRepository from "./repository/user-repository";
 import ProductRepository from "./repository/productRepository";
 import UserService from "./service/userService";
 import {authMiddleware} from "./middleware/authMiddleware";
-import {User} from "./models/user";
 import {ObjectId} from "mongodb";
 import {emailRouter} from "./routes/emailRouter";
 

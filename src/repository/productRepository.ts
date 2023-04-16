@@ -8,7 +8,7 @@ export default class ProductRepository {
   private productCollection: Collection<Product>;
 
   constructor() {
-    this.productCollection = db.collection('videos');
+    this.productCollection = db.collection('products');
   }
 
   // Create a new product and add it to the repository
