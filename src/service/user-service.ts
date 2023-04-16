@@ -16,7 +16,6 @@ export default class UserService {
       throw new Error('Invalid password');
     }
     const token = jwtService.createJWT(user);
-    console.log(token)
     return token;
   }
 
