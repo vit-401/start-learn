@@ -2,16 +2,21 @@ import bcrypt from 'bcrypt';
 import {User} from "../models/user";
 import UserRepository from "../repository/user-repository";
 import {jwtService} from "../jwt-service";
+import {emailService} from "./emailService";
+import {v1} from "uuid";
 
 export default class UserService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(private userRepository: UserRepository) {
+  }
 
   async authenticate(email: string, password: string): Promise<string> {
+
     const user = await this.userRepository.findByEmail(email);
+
     if (!user) {
       throw new Error('User not found');
     }
-    const isPasswordValid = await bcrypt.compare(password, user.hashedPassword);
+    const isPasswordValid = await bcrypt.compare(password, user.accountData.hashedPassword);
     if (!isPasswordValid) {
       throw new Error('Invalid password');
     }
@@ -19,16 +24,37 @@ export default class UserService {
     return token;
   }
 
-  async createUser(user: User): Promise<User> {
+  async createUser(dataUser: { email: string, password: string }): Promise<User> {
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
-    const hashedPassword = await bcrypt.hash(user.password, salt);
+    const hashedPassword = await bcrypt.hash(dataUser.password, salt);
+
     const newUser: User = {
-      ...user,
-      hashedPassword,
-      saltPassword: salt,
-      dateCreated: new Date(),
+      accountData: {
+        ...dataUser,
+        hashedPassword,
+        saltPassword: salt,
+        dateCreated: new Date(),
+      },
+      emailConfirmation: {
+        isConfirmed: false,
+        confirmationCode: v1(),
+        expirationDate: new Date(),
+      }
     };
-    return await this.userRepository.create(newUser);
+
+    try {
+      const createdNewUser = await this.userRepository.create(newUser);
+
+      await emailService.sendEmailConfirmationMessage(newUser)
+      return createdNewUser;
+    } catch (err) {
+      console.error(`Failed to create user '${dataUser.email}': ${err}`);
+      return Promise.reject(err)
+    }
+
+
   }
+
+
 }

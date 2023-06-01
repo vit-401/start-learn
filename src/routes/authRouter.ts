@@ -1,5 +1,5 @@
 import express from "express";
-import {User} from "../models/user";
+import {DataUserType, User} from "../models/user";
 import UserService from "../service/userService";
 
 
@@ -16,10 +16,10 @@ export function authRouter(userService: UserService) {
     }
   });
 
-  router.post('/register', async (req, res, next) => {
+  router.post('/register', async ( req, res, next) => {
     try {
       const { email, password } = req.body;
-      const newUser: User = { email, password } as User;
+      const newUser: DataUserType = { email, password } as DataUserType;
       const user = await userService.createUser(newUser);
       res.json(user);
     } catch (err) {
@@ -29,3 +29,4 @@ export function authRouter(userService: UserService) {
 
   return router;
 }
+

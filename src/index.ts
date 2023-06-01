@@ -26,9 +26,10 @@ declare global {
 
 const productService = new ProductService(productRepository)
 const userService = new UserService(userRepository)
+app.use(errorHandler);
 
 app.use(bodyParser.json());
-app.use('/auth', authRouter(userService))
+app.use('/auth',  authRouter(userService))
 app.use('/products', authMiddleware, productsRoute(productService))
 app.use('/email', authMiddleware, emailRouter)
 
