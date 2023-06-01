@@ -1,5 +1,5 @@
 import express from "express";
-import {DataUserType, User} from "../models/user";
+import {DataUserType} from "../models/user";
 import UserService from "../service/userService";
 
 

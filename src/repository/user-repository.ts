@@ -1,10 +1,6 @@
-import {MongoClient, Collection, InsertOneResult, ObjectId} from 'mongodb';
+import { Collection, InsertOneResult, ObjectId} from 'mongodb';
 import {User} from '../models/user';
 import {db} from "../db";
-import {throws} from "assert";
-import errorHandler from "../middleware/errorHandler";
-import {v1} from "uuid";
-import {emailService} from "../service/emailService";
 
 
 export default class UserRepository {
