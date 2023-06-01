@@ -20,11 +20,14 @@ export default class UserService {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const confirmationCode = v1();
-    const newUser = {
+    const newUser: User = {
       ...user,
-      hashedPassword: hashedPassword,
-      saltPassword: salt,
-      password: password,
+      accountData: {
+        ...user.accountData,
+        hashedPassword: hashedPassword,
+        saltPassword: salt,
+        password: password,
+      },
       emailConfirmation: {
         expirationDate: new Date(Date.now() + 1000 * 60 * 60 * 24),
         confirmationCode,
