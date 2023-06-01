@@ -17,10 +17,23 @@ export function authRouter(userService: UserService) {
   });
 
 
+
+
   router.get(`/confirmation/:confirmationCode`, async (req, res, next) => {
     console.log("confirmationCode", req.params.confirmationCode)
     try {
       const user = await userService.confirmEmail(req.params.confirmationCode);
+      res.json(user);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+
+  router.post('/recovery-password', async (req, res, next) => {
+    try {
+      const {email, password} = req.body;
+const user = await userService.recoveryPassword(email , password);
       res.json(user);
     } catch (err) {
       next(err);

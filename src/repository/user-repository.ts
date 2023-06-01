@@ -3,6 +3,8 @@ import {User} from '../models/user';
 import {db} from "../db";
 import {throws} from "assert";
 import errorHandler from "../middleware/errorHandler";
+import {v1} from "uuid";
+import {emailService} from "../service/emailService";
 
 
 export default class UserRepository {
@@ -31,6 +33,26 @@ export default class UserRepository {
       throw err;
     }
   }
+  // async recoveryPassword(email: string): Promise<User> {
+  //   const user = await this.userRepository.findByEmail(email);
+  //   if (!user) {
+  //     throw new Error('User not found');
+  //   }
+  //   const confirmationCode = v1();
+  //   user.emailConfirmation = {
+  //     expirationDate: new Date(Date.now() + 1000 * 60 * 60 * 24),
+  //     confirmationCode,
+  //     isConfirmed: false,
+  //   };
+  //   await this.userRepository.update(user);
+  //   const emailDara = {
+  //     to: email,
+  //     subject: "Confirmation email",
+  //     html: `<a href=\"http://localhost:3000/auth/confirm-email?token=${confirmationCode}\">Confirm email</a>`,
+  //   }
+  //   await emailService.sendEmail(emailDara.to, emailDara.subject, emailDara.html);
+  //   return user;
+  // }
 
   async findByEmail(email: string): Promise<User | null> {
     try {
