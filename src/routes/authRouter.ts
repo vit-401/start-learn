@@ -8,7 +8,7 @@ export function authRouter(userService: UserService) {
 
   router.post('/login', async (req, res, next) => {
     try {
-      const { email, password } = req.body;
+      const {email, password} = req.body;
       const user = await userService.authenticate(email, password);
       res.json(user);
     } catch (err) {
@@ -16,10 +16,21 @@ export function authRouter(userService: UserService) {
     }
   });
 
-  router.post('/register', async ( req, res, next) => {
+
+  router.get(`/confirmation/:confirmationCode`, async (req, res, next) => {
+    console.log("confirmationCode", req.params.confirmationCode)
     try {
-      const { email, password } = req.body;
-      const newUser: DataUserType = { email, password } as DataUserType;
+      const user = await userService.confirmEmail(req.params.confirmationCode);
+      res.json(user);
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  router.post('/register', async (req, res, next) => {
+    try {
+      const {email, password} = req.body;
+      const newUser: DataUserType = {email, password} as DataUserType;
       const user = await userService.createUser(newUser);
       res.json(user);
     } catch (err) {

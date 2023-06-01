@@ -5,8 +5,24 @@ import {jwtService} from "../jwt-service";
 import {emailService} from "./emailService";
 import {v1} from "uuid";
 
+
+
+
+
+
 export default class UserService {
   constructor(private userRepository: UserRepository) {
+  }
+
+
+  async confirmEmail(confirmationCode: string): Promise<User> {
+    const user = await this.userRepository.findByConfirmationCode(confirmationCode);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    user.emailConfirmation.isConfirmed = true;
+    await this.userRepository.update(user);
+    return user;
   }
 
   async authenticate(email: string, password: string): Promise<string> {
@@ -42,7 +58,6 @@ export default class UserService {
         expirationDate: new Date(),
       }
     };
-
     try {
       const createdNewUser = await this.userRepository.create(newUser);
 
@@ -52,9 +67,5 @@ export default class UserService {
       console.error(`Failed to create user '${dataUser.email}': ${err}`);
       return Promise.reject(err)
     }
-
-
   }
-
-
 }

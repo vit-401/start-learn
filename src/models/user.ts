@@ -1,9 +1,9 @@
 import {ObjectId} from "mongodb";
 
 export type User = {
+  _id?: ObjectId;
   accountData: {
     email: string,
-    _id?: ObjectId;
     password: string,
     hashedPassword: string,
     saltPassword: any,

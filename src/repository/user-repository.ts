@@ -12,6 +12,26 @@ export default class UserRepository {
     this.collection = db.collection<User>('users');
   }
 
+  findByConfirmationCode(confirmationCode: string): Promise<User | null> {
+    try {
+      const user: any = this.collection?.findOne({"emailConfirmation.confirmationCode": confirmationCode})
+      return user ?? null;
+    } catch (err) {
+      console.error(`Failed to find user by confirmation code '${confirmationCode}': ${err}`);
+      throw err;
+    }
+  }
+
+  update(user: User): Promise<User> {
+    try {
+      const updatedUser = this.collection?.updateOne({_id: user._id}, {$set: user})
+      return Promise.resolve(user);
+    } catch (err) {
+      console.error(`Failed to update user '${user}': ${err}`);
+      throw err;
+    }
+  }
+
   async findByEmail(email: string): Promise<User | null> {
     try {
       const user = await this.collection?.findOne({"accountData.email": email})

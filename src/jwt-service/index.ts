@@ -1,5 +1,5 @@
 import * as jwt from 'jsonwebtoken';
-import { ObjectId } from 'mongodb';
+import {ObjectId, WithId} from 'mongodb';
 import {User} from "../models/user";
 
 
