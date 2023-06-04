@@ -1,14 +1,32 @@
 import bcrypt from 'bcrypt';
 import {User} from "../models/user";
 import UserRepository from "../repository/user-repository";
-import {jwtService} from "../jwt-service";
+import {jwtReturnData, jwtService} from "../jwt-service";
 import {emailService} from "./emailService";
 import {v1} from "uuid";
+import {WithId} from "mongodb";
 
 const saltRounds = 10;
 
 export default class UserService {
   constructor(private userRepository: UserRepository) {
+  }
+
+
+  async logout(email: string): Promise<User> {
+    const user = await this.userRepository.findByEmail(email);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    const newUser: User = {
+      ...user,
+      accountData: {
+        ...user.accountData,
+        // token: '',
+      }
+    }
+    await this.userRepository.update(newUser);
+    return user;
   }
 
   async recoveryPassword(email: string, password: string): Promise<User> {
@@ -55,7 +73,7 @@ export default class UserService {
     return user;
   }
 
-  async authenticate(email: string, password: string): Promise<string> {
+  async authenticate(email: string, password: string): Promise<{ user: User, token: jwtReturnData }> {
 
     const user = await this.userRepository.findByEmail(email);
 
@@ -67,8 +85,8 @@ export default class UserService {
     if (!isPasswordValid) {
       throw new Error('Invalid password');
     }
-    const token = jwtService.createJWT(user);
-    return token;
+    const token = await jwtService.createJWT(user);
+    return {token, user};
   }
 
   async createUser(dataUser: { email: string, password: string }): Promise<User> {

@@ -18,6 +18,18 @@ export function authRouter(userService: UserService) {
 
 
 
+  router.post('/logout', async (req, res, next) => {
+    try {
+      const {email} = req.body;
+      const user = await userService.logout(email);
+      res.json(user);
+    } catch (err) {
+      next(err);
+    }
+  } );
+
+
+
 
   router.get(`/confirmation/:confirmationCode`, async (req, res, next) => {
     console.log("confirmationCode", req.params.confirmationCode)

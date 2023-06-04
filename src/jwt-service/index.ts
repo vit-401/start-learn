@@ -3,18 +3,50 @@ import {ObjectId, WithId} from 'mongodb';
 import {User} from "../models/user";
 
 
-export class JWTService {
-  private secretKey: string = process.env.JWT_SECRET_KEY || 'default-secret';
+export type jwtReturnData = { accessToken: string, refreshToken: string }
 
-  public createJWT(user: User): string {
-    const payload = { userId: user._id };
-    const options = { expiresIn: '1h' };
-    return jwt.sign(payload, this.secretKey, options);
+
+
+const optionsAccessToken = {expiresIn: '10m'};
+const optionsRefreshToken = {expiresIn: '1d'};
+
+export class JWTService {
+  private secretAccessKey: string = process.env.JWT_SECRET_ACCESS_KEY || 'default-Access-secret';
+  private secretRefreshKey: string = process.env.JWT_SECRET_REFRESH_KEY || 'default-Refresh-secret';
+
+
+  public createJWT(user: User): jwtReturnData {
+    const payload = {userId: user._id};
+
+
+    const accessToken = jwt.sign(payload, this.secretAccessKey, optionsAccessToken);
+    const refreshToken = jwt.sign(payload, this.secretRefreshKey, optionsRefreshToken);
+
+    return {
+      accessToken,
+      refreshToken
+    }
+    // return jwt.sign(payload, this.secretKey, options);
   }
 
-  public getUserByToken(token: string): ObjectId | null {
+  refreshJWT(refreshToken: string): jwtReturnData {
+    const payload = jwt.verify(refreshToken, this.secretRefreshKey) as { userId: string };
+    if (!payload) {
+      throw new Error('Invalid token');
+    }
+    const accessToken = jwt.sign(payload, this.secretRefreshKey, optionsRefreshToken);
+    return {
+      accessToken,
+      refreshToken
+    }
+  }
+
+  public getUserByToken(accessToken: string): ObjectId | null {
     try {
-      const payload = jwt.verify(token, this.secretKey) as { userId: string };
+      const payload = jwt.verify(accessToken, this.secretAccessKey) as { userId: string };
+      if (!payload) {
+        throw new Error('Invalid token');
+      }
       return new ObjectId(payload.userId);
     } catch {
       return null;
