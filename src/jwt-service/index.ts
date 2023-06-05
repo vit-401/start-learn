@@ -67,39 +67,27 @@ export class JWTService {
   async refreshJWT(refreshToken: string): Promise<jwtReturnData> {
 
 
+    const payload = jwt.verify(refreshToken, this.secretRefreshKey) as { userId: string, iat: number }; // undefined | { userId: string, iat:number }
+    if (!payload) throw new Error('Invalid token');
 
-    const payload = jwt.verify(refreshToken, this.secretRefreshKey) as { userId: string, iat:number }; // undefined | { userId: string, iat:number }
     const findedRefreshTokenMetadata = await this.authRepository.findRefreshTokenMetadataByIssuedAt(payload.iat);
     if (!findedRefreshTokenMetadata) throw new Error('refreshTokenMetadata not found by issuedAt');
 
     const newAccessToken = jwt.sign({userId: payload.userId}, this.secretAccessKey, optionsAccessToken); // undefined | string
     const newRefreshToken = jwt.sign({userId: payload.userId}, this.secretRefreshKey, optionsRefreshToken); // undefined | string
-    if (!payload) throw new Error('Invalid token');
 
-    const refreshTokenMetadata = await this.authRepository.findByUserId(payload.userId); // undefined | RefreshTokenMetadata
-    if (!refreshTokenMetadata) throw new Error('refreshTokenMetadata not found by userId');
-    const existRefreshTokenMetadataByDevice = await this.authRepository.findDeviceIdByDeviceId(refreshTokenMetadata.deviceId!);
     const decodedToken = jwt.decode(newRefreshToken) as JwtPayload;
 
-
-    if (!existRefreshTokenMetadataByDevice) throw new Error('refreshTokenMetadata not found by deviceId');
-    const result = await this.authRepository.update({...refreshTokenMetadata, issuedAt: decodedToken!.iat!});
-
-
-    // const decodedToken = jwt.decode(refreshToken) as JwtPayload;
-    // if(moment(decodedToken.iat) ) {
-
-    // }
-
+    const result = await this.authRepository.update({...findedRefreshTokenMetadata, issuedAt: decodedToken!.iat!});
 
     return Promise.resolve({accessToken: newAccessToken, refreshToken: newRefreshToken});
   }
 
   public async getUserByToken(accessToken: string): Promise<ObjectId | null> {
     try {
-      const payload = jwt.verify(accessToken, this.secretAccessKey) as {iat:number, userId: string };
+      const payload = jwt.verify(accessToken, this.secretAccessKey) as { iat: number, userId: string };
       const findedRefreshTokenMetadata = await this.authRepository.findRefreshTokenMetadataByIssuedAt(payload.iat);
-      if(!findedRefreshTokenMetadata) throw new Error('refreshTokenMetadata not found by issuedAt');
+      if (!findedRefreshTokenMetadata) throw new Error('refreshTokenMetadata not found by issuedAt');
       if (!payload) {
         throw new Error('Invalid token');
       }
