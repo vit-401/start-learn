@@ -29,6 +29,12 @@ export default class UserService {
     return user;
   }
 
+  async refreshJWT(email: string, token: string): Promise<jwtReturnData> {
+    const newToken = await jwtService.refreshJWT(token);
+    // const newToken = await jwtService.createJWT(user);
+    return newToken;
+  }
+
   async recoveryPassword(email: string, password: string): Promise<User> {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
@@ -73,7 +79,10 @@ export default class UserService {
     return user;
   }
 
-  async authenticate(email: string, password: string): Promise<{ user: User, token: jwtReturnData }> {
+  async authenticate(email: string, password: string, deviceId?: string, ip?: string, deviceName?: string): Promise<{
+    user: User,
+    token: jwtReturnData
+  }> {
 
     const user = await this.userRepository.findByEmail(email);
 
@@ -85,7 +94,8 @@ export default class UserService {
     if (!isPasswordValid) {
       throw new Error('Invalid password');
     }
-    const token = await jwtService.createJWT(user);
+    const token = await jwtService.createJWT(user, deviceId, ip, deviceName);
+
     return {token, user};
   }
 

@@ -1,6 +1,7 @@
 import express from "express";
 import {DataUserType} from "../models/user";
 import UserService from "../service/userService";
+import {jwtService} from "../jwt-service";
 
 
 export function authRouter(userService: UserService) {
@@ -9,13 +10,25 @@ export function authRouter(userService: UserService) {
   router.post('/login', async (req, res, next) => {
     try {
       const {email, password} = req.body;
-      const user = await userService.authenticate(email, password);
+      const deviceId = req.headers['user-agent'];
+
+      const user = await userService.authenticate(email, password,deviceId, req.ip, deviceId);
       res.json(user);
     } catch (err) {
       next(err);
     }
   });
 
+  router.post('/refresh-token', async (req, res, next) => {
+    try {
+      const {email, refreshToken} = req.body;
+
+      const user = await userService.refreshJWT(email, refreshToken);
+      res.json(user);
+    } catch (err) {
+      next(err);
+    }
+  })
 
 
   router.post('/logout', async (req, res, next) => {
@@ -26,9 +39,7 @@ export function authRouter(userService: UserService) {
     } catch (err) {
       next(err);
     }
-  } );
-
-
+  });
 
 
   router.get(`/confirmation/:confirmationCode`, async (req, res, next) => {
@@ -45,7 +56,7 @@ export function authRouter(userService: UserService) {
   router.post('/recovery-password', async (req, res, next) => {
     try {
       const {email, password} = req.body;
-const user = await userService.recoveryPassword(email , password);
+      const user = await userService.recoveryPassword(email, password);
       res.json(user);
     } catch (err) {
       next(err);

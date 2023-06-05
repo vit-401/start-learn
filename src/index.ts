@@ -10,6 +10,7 @@ import UserService from "./service/userService";
 import {authMiddleware} from "./middleware/authMiddleware";
 import {ObjectId} from "mongodb";
 import {emailRouter} from "./routes/emailRouter";
+import useragent from "express-useragent";
 
 const bodyParser = require('body-parser')
 const app = express()
@@ -27,6 +28,7 @@ declare global {
 const productService = new ProductService(productRepository)
 const userService = new UserService(userRepository)
 app.use(errorHandler);
+app.use(useragent.express());
 
 app.use(bodyParser.json());
 app.use('/auth',  authRouter(userService))
