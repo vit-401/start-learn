@@ -12,9 +12,9 @@ import {Logs} from "../models/logs";
     this.collection = db.collection<Logs>('logs');
   }
 
-  async findOneByIP(ip: string): Promise<WithId<Logs> | null> {
+  async findOneByIPAndRoot(ip: string, root:string): Promise<WithId<Logs> | null> {
     try {
-      const logs = await this.collection?.findOne({ip: ip})
+      const logs = await this.collection?.findOne({ip: ip, root: root})
       return logs ?? null;
     } catch (err) {
       console.error(`Failed to find logs by ip '${ip}': ${err}`);

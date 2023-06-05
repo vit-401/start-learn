@@ -3,7 +3,8 @@ import logsRepository from "../repository/logsRepository";
 export async function rateLimiterMiddleware(req: Request, res: Response, next: NextFunction) {
   const logRepository = logsRepository;
   try {
-    const root = req.baseUrl;
+    console.log(req)
+    const root = req.originalUrl;
     const ip = req.ip;
     const maxRequestsPerSecond = 10;
 
@@ -11,7 +12,8 @@ export async function rateLimiterMiddleware(req: Request, res: Response, next: N
       logRepository.deleteLogById(ip);
     }, 1000 * 60); // Clear logs after 1 minute
 
-    const existLog = await logRepository.findOneByIP(ip);
+    const existLog = await logRepository.findOneByIPAndRoot(ip, root);
+
     if (!existLog) {
       const log = await logRepository.create({ root, ip, count: 1 });
     } else {
