@@ -12,6 +12,7 @@ import {ObjectId} from "mongodb";
 import {emailRouter} from "./routes/emailRouter";
 import useragent from "express-useragent";
 import cors from "cors";
+import {rateLimiterMiddleware} from "./middleware/rateLimiterMiddleware";
 
 
 const bodyParser = require('body-parser')
@@ -32,11 +33,11 @@ const userService = new UserService(userRepository)
 
 
 app.use(cors({origin: '*'}))
-
 app.use(errorHandler);
 app.use(useragent.express());
 
 app.use(bodyParser.json());
+app.use(rateLimiterMiddleware)
 app.use('/auth', authRouter(userService))
 app.use('/products', authMiddleware, productsRoute(productService))
 app.use('/email', authMiddleware, emailRouter)
