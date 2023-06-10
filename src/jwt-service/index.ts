@@ -1,10 +1,9 @@
 import * as jwt from 'jsonwebtoken';
-import {ObjectId, WithId} from 'mongodb';
+import {ObjectId} from 'mongodb';
 import {User} from "../models/user";
 import AuthRepository from "../repository/authRepository";
 import {JwtPayload} from "jsonwebtoken";
-import {RefreshTokenMetadata} from "../models/aurh";
-import moment from "moment";
+
 
 
 export type jwtReturnData = { accessToken: string, refreshToken: string }
