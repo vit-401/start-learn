@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import {User} from "../models/user";
-import UserRepository from "../repository/user-repository";
+import UserRepository from "../repository/userRepository";
 import {jwtReturnData, jwtService} from "../jwt-service";
 import {emailService} from "./emailService";
 import {v1} from "uuid";

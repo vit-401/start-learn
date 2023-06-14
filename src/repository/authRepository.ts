@@ -1,14 +1,13 @@
-import {Collection, InsertOneResult, ObjectId} from 'mongodb';
-import {User} from '../models/user';
-import {db} from "../db";
+import {ObjectId} from 'mongodb';
 import {RefreshTokenMetadata} from "../models/aurh";
+import {AuthMetadataModel} from "../schemas/authMetadata-model";
 
 
 export default class AuthRepository {
-  private collection?: Collection<RefreshTokenMetadata>;
+  private collection?: typeof AuthMetadataModel;
 
   constructor() {
-    this.collection = db.collection<RefreshTokenMetadata>('authMetadata');
+    this.collection = AuthMetadataModel;
   }
 
   async findDeviceIdByDeviceId(deviceId: string): Promise<RefreshTokenMetadata> {
@@ -45,7 +44,7 @@ export default class AuthRepository {
 
   async create(refreshTokenMetadata: RefreshTokenMetadata): Promise<boolean> {
     try {
-      const result = await this.collection?.insertOne(refreshTokenMetadata);
+      const result = await this.collection?.insertMany([refreshTokenMetadata]);
       if (!result) throw new Error('Failed to create refresh token metadata');
       console.log(result)
       return true;
@@ -65,6 +64,7 @@ export default class AuthRepository {
       throw err;
     }
   }
+
 
 }
 

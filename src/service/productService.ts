@@ -3,10 +3,12 @@ import {Product} from "../models/product";
 
 
 export class ProductService {
- private productRepository: ProductRepository
-constructor(productRepository:ProductRepository) {
-  this.productRepository = productRepository
-}
+  private productRepository: ProductRepository
+
+  constructor(productRepository: ProductRepository) {
+    this.productRepository = productRepository
+  }
+
   // Create a new product and add it to the repository
   async createProduct(product: Product): Promise<Product> {
     const existingProduct = await this.productRepository.createProduct(product);
@@ -24,7 +26,6 @@ constructor(productRepository:ProductRepository) {
   // Delete an existing product from the repository
   async deleteProduct(id: string): Promise<Product[]> {
     const result = await this.productRepository.deleteProduct(id);
-
     return result;
   }
 
@@ -43,8 +44,8 @@ constructor(productRepository:ProductRepository) {
   }
 
   // Get all products from the repository
-  async getAllProducts(search?: string, limit?:string, page?:string,sort?:string): Promise<Product[]> {
-    const products = await this.productRepository.getAllProducts(search,limit,page,sort);
+  async getAllProducts(search?: string, limit?: string, page?: string, sort?: string): Promise<Product[]> {
+    const products = await this.productRepository.getAllProducts(search, limit, page, sort);
     return products;
   }
 }

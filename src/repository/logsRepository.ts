@@ -1,20 +1,22 @@
 import {Collection, InsertOneResult, ObjectId, WithId} from 'mongodb';
 import {User} from '../models/user';
-import {db} from "../db";
+// import {db} from "../db";
 import {RefreshTokenMetadata} from "../models/aurh";
 import {Logs} from "../models/logs";
+import LogsModel from "../schemas/logs-model";
 
 
   class LogsRepository {
-  private collection?: Collection<Logs>;
+  private collection?: typeof LogsModel;
 
   constructor() {
-    this.collection = db.collection<Logs>('logs');
+    this.collection = LogsModel;
+    // this.collection = db.collection<Logs>('logs');
   }
 
-  async findOneByIPAndRoot(ip: string, root:string): Promise<WithId<Logs> | null> {
+  async findOneByIPAndRoot(ip: string, root:string): Promise<Logs | null> {
     try {
-      const logs = await this.collection?.findOne({ip: ip, root: root})
+      const logs = await this.collection?.findOne({ip: ip, root: root}, {lean: true});
       return logs ?? null;
     } catch (err) {
       console.error(`Failed to find logs by ip '${ip}': ${err}`);
@@ -22,12 +24,11 @@ import {Logs} from "../models/logs";
     }
   }
 
-  async create(logs: Logs): Promise<WithId<Logs>> {
+  async create(logs: Logs): Promise<Logs> {
     try {
-      const result = await this.collection?.insertOne(logs);
-      if (!result) throw new Error('Failed to create logs');
-      const logsId = result.insertedId;
-      return {...logs, _id: logsId};
+      const result = await this.collection?.insertMany([logs]);
+      if (!result?.length) throw new Error('Failed to create logs');
+      return result[0];
     } catch (err) {
       console.error(`Failed to insert logs '${logs}': ${err}`);
       throw err;
@@ -36,7 +37,7 @@ import {Logs} from "../models/logs";
 
   async getAll(): Promise<Logs[]> {
     try {
-      const result = await this.collection?.find({}).toArray();
+      const result = await this.collection?.find({});
       if (!result) throw new Error('Failed to get logs');
       return result;
     } catch (err) {
@@ -56,7 +57,7 @@ import {Logs} from "../models/logs";
     }
   }
 
-  async changeLogById(log: WithId<Logs>): Promise<WithId<Logs>> {
+  async changeLogById(log: WithId<Logs>): Promise<Logs> {
     try {
       const result = await this.collection?.updateOne({_id: log._id}, {$set: log});
       if (!result) throw new Error('Failed to change log');

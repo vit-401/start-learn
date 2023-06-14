@@ -1,26 +1,25 @@
-import {db} from "../db";
-import {Collection, ObjectId} from "mongodb";
 import {Product} from "../models/product";
-
+import {ObjectId} from "mongodb";
+import {ProductModel} from "../schemas/product-model";
 
 
 export default class ProductRepository {
-  private productCollection: Collection<Product>;
+  public productCollection: typeof ProductModel;
 
-  constructor() {
-    this.productCollection = db.collection('products');
+  constructor(productCollection: typeof ProductModel) {
+    this.productCollection = productCollection;
   }
 
   // Create a new product and add it to the repository
   async createProduct(product: Product): Promise<Product> {
-    const existingProduct = await this.productCollection.findOne({title: product.title});
-    if (existingProduct) {
+    const existingProduct = await this.productCollection.find({title: product.title});
+    console.log()
+    if (existingProduct.length) {
       throw new Error('Product already exists');
     }
 
-    const result = await this.productCollection.insertOne(product)
-    const insertedProduct = await this.getProductById(result.insertedId.toString())
-    return insertedProduct;
+    const result = await this.productCollection.insertMany([product], {lean: true})
+    return result[0];
   }
 
   // Update an existing product in the repository
@@ -29,10 +28,10 @@ export default class ProductRepository {
     const result = await this.productCollection.findOneAndUpdate(
       {_id: objectId},
       {$set: productUpdates},
+      {lean: true}
     );
 
-    const updatedProduct = result.value;
-    if (!updatedProduct) {
+    if (!result) {
       throw new Error('Product not found');
     }
 
@@ -48,7 +47,7 @@ export default class ProductRepository {
       throw new Error('Product not found');
     }
 
-    const products = await this.productCollection.find().toArray();
+    const products = await this.productCollection.find()
     return products;
   }
 
@@ -61,7 +60,7 @@ export default class ProductRepository {
       throw new Error('Product not found');
     }
 
-    const products = await this.productCollection.find().toArray();
+    const products = await this.productCollection.find();
     return products;
   }
 
@@ -90,10 +89,10 @@ export default class ProductRepository {
     const products = await this.productCollection.find(query)
       .skip(skip)
       .limit(perPage)
-      .sort({ title: sortOrder, price: sortOrder })
-      .toArray();
+      .sort({title: sortOrder, price: sortOrder})
     return products;
   }
+
 }
 
 
