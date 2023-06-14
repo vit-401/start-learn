@@ -3,6 +3,7 @@ import { app } from '../src/settings'
 import dotenv from 'dotenv'
 dotenv.config()
 
+// TODO: add tests for all routes
 
 const dbName = 'back'
 const mongoURI = process.env.mongoURI || `mongodb://0.0.0.0:27017/${dbName}`
