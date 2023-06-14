@@ -8,8 +8,10 @@
     "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.13",
     "@types/express-useragent": "^1.0.2",
+    "@types/jest": "^29.5.2",
     "@types/jsonwebtoken": "^8.5.8",
     "@types/nodemailer": "^6.4.4",
+    "@types/supertest": "^2.0.12",
     "@types/uuid": "^8.3.4",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.19.2",
@@ -19,18 +21,22 @@
     "express-useragent": "^1.0.15",
     "express-validator": "^6.15.0",
     "googleapis": "^118.0.0",
+    "jest": "^29.5.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.4",
     "mongodb": "^4.5.0",
     "mongoose": "^7.2.3",
     "nodemailer": "^6.7.7",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.1.0",
     "uuid": "^8.3.2"
   },
   "scripts": {
     "dev": "nodemon --inspect dist/index.js",
     "watch": "tsc -w",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "jest": "jest -i"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
