@@ -1,22 +1,11 @@
 import express from "express";
-import UserService from "../service/userService";
-import {CodeResponsesEnum} from "../utils/constants";
+import {userController} from "../compositions/user-composition";
 
 
-export function userRouter(userService: UserService) {
+export function userRouter() {
   const router = express.Router();
 
-  router.delete('/:id', async (req, res, next) => {
-    try {
-      const {id} = req.params;
-      const deviceId = req.headers['user-agent'];
-
-      const user = await userService.delete(id);
-      res.json(user).status(CodeResponsesEnum.SUCCESS);
-    } catch (err) {
-      next(err);
-    }
-  });
+  router.delete('/:id', userController.delete.bind(userController));
 
 
   return router;

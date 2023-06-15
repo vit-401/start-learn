@@ -4,28 +4,24 @@ import {ProductModel} from "../schemas/product-model";
 
 
 export default class ProductRepository {
-  public productCollection: typeof ProductModel;
 
-  constructor(productCollection: typeof ProductModel) {
-    this.productCollection = productCollection;
-  }
 
   // Create a new product and add it to the repository
   async createProduct(product: Product): Promise<Product> {
-    const existingProduct = await this.productCollection.find({title: product.title});
+    const existingProduct = await ProductModel.find({title: product.title});
     console.log()
     if (existingProduct.length) {
       throw new Error('Product already exists');
     }
 
-    const result = await this.productCollection.insertMany([product], {lean: true})
+    const result = await ProductModel.insertMany([product], {lean: true})
     return result[0];
   }
 
   // Update an existing product in the repository
   async updateProduct(id: string, productUpdates: Partial<Product>): Promise<Product> {
     const objectId = new ObjectId(id);
-    const result = await this.productCollection.findOneAndUpdate(
+    const result = await ProductModel.findOneAndUpdate(
       {_id: objectId},
       {$set: productUpdates},
       {lean: true}
@@ -41,33 +37,33 @@ export default class ProductRepository {
   // Delete an existing product from the repository
   async deleteProduct(id: string): Promise<Product[]> {
     const objectId = new ObjectId(id);
-    const result = await this.productCollection.deleteOne({_id: objectId});
+    const result = await ProductModel.deleteOne({_id: objectId});
 
     if (result.deletedCount === 0) {
       throw new Error('Product not found');
     }
 
-    const products = await this.productCollection.find()
+    const products = await ProductModel.find()
     return products;
   }
 
   // Delete an existing product from the repository
   async deleteAllProduct(): Promise<Product[]> {
 
-    const result = await this.productCollection.deleteMany({});
+    const result = await ProductModel.deleteMany({});
 
     if (result.deletedCount === 0) {
       throw new Error('Product not found');
     }
 
-    const products = await this.productCollection.find();
+    const products = await ProductModel.find();
     return products;
   }
 
   // Get a product by its ID from the repository
   async getProductById(id: string): Promise<Product> {
     const objectId = new ObjectId(id);
-    const product = await this.productCollection.findOne({_id: objectId});
+    const product = await ProductModel.findOne({_id: objectId});
     if (!product) {
       throw new Error('Product not found');
     }
@@ -86,7 +82,7 @@ export default class ProductRepository {
     const skip = (currentPage - 1) * perPage; // calculate number of results to skip
     const sortOrder = sort === 'desc' ? -1 : 1; // determine sort order, default ascending
 
-    const products = await this.productCollection.find(query)
+    const products = await ProductModel.find(query)
       .skip(skip)
       .limit(perPage)
       .sort({title: sortOrder, price: sortOrder})
