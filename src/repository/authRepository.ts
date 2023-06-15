@@ -46,7 +46,6 @@ export default class AuthRepository {
     try {
       const result = await this.collection?.insertMany([refreshTokenMetadata]);
       if (!result) throw new Error('Failed to create refresh token metadata');
-      console.log(result)
       return true;
     } catch (err) {
       console.error(`Failed to insert refresh token metadata '${refreshTokenMetadata}': ${err}`);

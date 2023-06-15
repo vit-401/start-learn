@@ -1,15 +1,17 @@
 import request from 'supertest'
-import { app } from '../src/settings'
 import dotenv from 'dotenv'
+import {MongoClient} from "mongodb";
+import {app} from "../src/setting";
+import {CodeResponsesEnum} from "../src/utils/constants";
 dotenv.config()
 
 // TODO: add tests for all routes
 
-const dbName = 'back'
+const dbName = 'home_works_test'
 const mongoURI = process.env.mongoURI || `mongodb://0.0.0.0:27017/${dbName}`
 
 describe('/videos', () => {
-  let newVideo: VideoType | null = null
+  let newVideo: any | null = null
   const client = new MongoClient(mongoURI)
 
   beforeAll(async () => {
@@ -29,7 +31,7 @@ describe('/videos', () => {
     await request(app)
       .post('/videos/')
       .send({ title: '', author: '' })
-      .expect(CodeResponsesEnum.Incorrect_values_400, {
+      .expect(CodeResponsesEnum.BAD_REQUEST, {
         errorsMessages: [
           { message: 'title is required', field: 'title' },
           { message: 'author is required', field: 'author' },
@@ -53,7 +55,7 @@ describe('/videos', () => {
     await request(app)
       .put('/videos/' + 1223)
       .send({ title: 'title', author: 'title' })
-      .expect(CodeResponsesEnum.Not_found_404)
+      .expect(CodeResponsesEnum.NOT_FOUND)
 
     const res = await request(app).get('/videos/')
     expect(res.body[0]).toEqual(newVideo)
@@ -67,7 +69,7 @@ describe('/videos', () => {
         author: 'hello author',
         publicationDate: '2023-01-12T08:12:39.261Z',
       })
-      .expect(CodeResponsesEnum.Not_content_204)
+      .expect(CodeResponsesEnum.NOT_CONTENT)
 
     const res = await request(app).get('/videos/')
     expect(res.body[0]).toEqual({
@@ -82,7 +84,7 @@ describe('/videos', () => {
   it('- DELETE product by incorrect ID', async () => {
     await request(app)
       .delete('/videos/876328')
-      .expect(CodeResponsesEnum.Not_found_404)
+      .expect(CodeResponsesEnum.NOT_FOUND)
 
     const res = await request(app).get('/videos/')
     expect(res.body[0]).toEqual(newVideo)
@@ -91,7 +93,7 @@ describe('/videos', () => {
     await request(app)
       .delete('/videos/' + newVideo!.id)
       .set('authorization', 'Basic YWRtaW46cXdlcnR5')
-      .expect(CodeResponsesEnum.Not_content_204)
+      .expect(CodeResponsesEnum.NOT_CONTENT)
 
     const res = await request(app).get('/videos/')
     expect(res.body.length).toBe(0)

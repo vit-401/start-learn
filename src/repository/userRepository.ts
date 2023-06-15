@@ -3,6 +3,17 @@ import {User} from "../models/user";
 
 export default class UserRepository {
 
+
+  async delete(id: string): Promise<Boolean> {
+    try {
+      const result = await UserModel.deleteOne({_id: id});
+      return result.deletedCount === 1;
+    } catch (err) {
+      console.error(`Failed to delete user with id '${id}': ${err}`);
+      throw err;
+    }
+  }
+
   async findByConfirmationCode(confirmationCode: string): Promise<User | null> {
     try {
       const user = await UserModel.findOne({"emailConfirmation.confirmationCode": confirmationCode});

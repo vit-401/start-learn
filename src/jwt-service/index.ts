@@ -1,12 +1,11 @@
 import * as jwt from 'jsonwebtoken';
+import {JwtPayload} from 'jsonwebtoken';
 import {ObjectId} from 'mongodb';
 import {User} from "../models/user";
 import AuthRepository from "../repository/authRepository";
-import {JwtPayload} from "jsonwebtoken";
 
 
-
-export type jwtReturnData = { accessToken: string, refreshToken: string }
+export type JwtReturnData = { accessToken: string, refreshToken: string }
 
 
 const optionsAccessToken = {expiresIn: '10m'};
@@ -20,7 +19,7 @@ export class JWTService {
   }
 
 
-  public async createJWT(user: User, deviceId?: string, ip?: string, deviceName?: string): Promise<jwtReturnData> {
+  public async createJWT(user: User, deviceId?: string, ip?: string, deviceName?: string): Promise<JwtReturnData> {
     const payload = {userId: user._id};
 
 
@@ -30,7 +29,7 @@ export class JWTService {
     const refreshTokenMetadata = {
       userId: user._id!,
       issuedAt: decodedToken!.iat!,
-      deviceId: deviceId!,
+      deviceId: deviceId,
       ip: ip,
       deviceName: deviceName,
     }
@@ -63,7 +62,7 @@ export class JWTService {
    */
 
 
-  async refreshJWT(refreshToken: string): Promise<jwtReturnData> {
+  async refreshJWT(refreshToken: string): Promise<JwtReturnData> {
 
 
     const payload = jwt.verify(refreshToken, this.secretRefreshKey) as { userId: string, iat: number }; // undefined | { userId: string, iat:number }

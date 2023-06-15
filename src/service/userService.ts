@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import {User} from "../models/user";
 import UserRepository from "../repository/userRepository";
-import {jwtReturnData, jwtService} from "../jwt-service";
+import {JwtReturnData, jwtService} from "../jwt-service";
 import {emailService} from "./emailService";
 import {v1} from "uuid";
 import {WithId} from "mongodb";
@@ -11,7 +11,10 @@ const saltRounds = 10;
 export default class UserService {
   constructor(private userRepository: UserRepository) {
   }
-
+async delete(id: string): Promise<Boolean> {
+    const result = await this.userRepository.delete(id);
+    return result;
+}
 
   async logout(email: string): Promise<User> {
     const user = await this.userRepository.findByEmail(email);
@@ -29,7 +32,7 @@ export default class UserService {
     return user;
   }
 
-  async refreshJWT(email: string, token: string): Promise<jwtReturnData> {
+  async refreshJWT(email: string, token: string): Promise<JwtReturnData> {
     const newToken = await jwtService.refreshJWT(token);
     // const newToken = await jwtService.createJWT(user);
     return newToken;
@@ -81,7 +84,7 @@ export default class UserService {
 
   async authenticate(email: string, password: string, deviceId?: string, ip?: string, deviceName?: string): Promise<{
     user: User,
-    token: jwtReturnData
+    token: JwtReturnData
   }> {
 
     const user = await this.userRepository.findByEmail(email);

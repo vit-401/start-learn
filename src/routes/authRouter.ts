@@ -1,7 +1,7 @@
 import express from "express";
 import {DataUserType} from "../models/user";
 import UserService from "../service/userService";
-import {jwtService} from "../jwt-service";
+import {CodeResponsesEnum} from "../utils/constants";
 
 
 export function authRouter(userService: UserService) {
@@ -12,7 +12,7 @@ export function authRouter(userService: UserService) {
       const {email, password} = req.body;
       const deviceId = req.headers['user-agent'];
 
-      const user = await userService.authenticate(email, password,deviceId, req.ip, deviceId);
+      const user = await userService.authenticate(email, password, deviceId, req.ip, deviceId);
       res.json(user);
     } catch (err) {
       next(err);
@@ -43,7 +43,6 @@ export function authRouter(userService: UserService) {
 
 
   router.get(`/confirmation/:confirmationCode`, async (req, res, next) => {
-    console.log("confirmationCode", req.params.confirmationCode)
     try {
       const user = await userService.confirmEmail(req.params.confirmationCode);
       res.json(user);
@@ -68,7 +67,7 @@ export function authRouter(userService: UserService) {
       const {email, password} = req.body;
       const newUser: DataUserType = {email, password} as DataUserType;
       const user = await userService.createUser(newUser);
-      res.json(user);
+      res.status(CodeResponsesEnum.CREATED).json(user);
     } catch (err) {
       next(err);
     }

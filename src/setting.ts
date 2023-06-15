@@ -12,6 +12,7 @@ import {authRouter} from "./routes/authRouter";
 import {authMiddleware} from "./middleware/authMiddleware";
 import productsRoute from "./routes/protuctRouter";
 import {emailRouter} from "./routes/emailRouter";
+import {userRouter} from "./routes/userRouter";
 
 const bodyParser = require('body-parser')
 
@@ -29,6 +30,7 @@ app.use(useragent.express());
 app.use(bodyParser.json());
 app.use(rateLimiterMiddleware)
 app.use('/auth', authRouter(userService))
+app.use('/users', userRouter(userService))
 app.use('/products',authMiddleware,  productsRoute(productService))
 app.use('/email', authMiddleware, emailRouter)
 

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const uri = process.env.mongoURI || 'mongodb://127.0.0.1:27017/myNewDatabase';
+export const uri = process.env.mongoURI || 'mongodb://127.0.0.1:27017/myNewDatabase';
 
 export default async function runDB() {
   try {
