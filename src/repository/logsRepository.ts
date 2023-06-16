@@ -1,22 +1,14 @@
-import {Collection, InsertOneResult, ObjectId, WithId} from 'mongodb';
-import {User} from '../models/user';
-// import {db} from "../db";
-import {RefreshTokenMetadata} from "../models/aurh";
+import {WithId} from 'mongodb';
 import {Logs} from "../models/logs";
 import LogsModel from "../schemas/logs-model";
 
-
-  class LogsRepository {
-  private collection?: typeof LogsModel;
-
+class LogsRepository {
   constructor() {
-    this.collection = LogsModel;
-    // this.collection = db.collection<Logs>('logs');
   }
 
-  async findOneByIPAndRoot(ip: string, root:string): Promise<Logs | null> {
+  async findOneByIPAndRoot(ip: string, root: string): Promise<Logs | null> {
     try {
-      const logs = await this.collection?.findOne({ip: ip, root: root}, {lean: true});
+      const logs = await LogsModel?.findOne({ip: ip, root: root}, {lean: true});
       return logs ?? null;
     } catch (err) {
       console.error(`Failed to find logs by ip '${ip}': ${err}`);
@@ -26,7 +18,7 @@ import LogsModel from "../schemas/logs-model";
 
   async create(logs: Logs): Promise<Logs> {
     try {
-      const result = await this.collection?.insertMany([logs]);
+      const result = await LogsModel?.insertMany([logs]);
       if (!result?.length) throw new Error('Failed to create logs');
       return result[0];
     } catch (err) {
@@ -37,7 +29,7 @@ import LogsModel from "../schemas/logs-model";
 
   async getAll(): Promise<Logs[]> {
     try {
-      const result = await this.collection?.find({});
+      const result = await LogsModel?.find({});
       if (!result) throw new Error('Failed to get logs');
       return result;
     } catch (err) {
@@ -48,7 +40,7 @@ import LogsModel from "../schemas/logs-model";
 
   async deleteLogById(logIP: string): Promise<boolean> {
     try {
-      const result = await this.collection?.deleteOne({ip: logIP});
+      const result = await LogsModel?.deleteOne({ip: logIP});
       if (!result) throw new Error('Failed to delete log');
       return true;
     } catch (err) {
@@ -59,7 +51,7 @@ import LogsModel from "../schemas/logs-model";
 
   async changeLogById(log: WithId<Logs>): Promise<Logs> {
     try {
-      const result = await this.collection?.updateOne({_id: log._id}, {$set: log});
+      const result = await LogsModel?.updateOne({_id: log._id}, {$set: log});
       if (!result) throw new Error('Failed to change log');
       return {...log};
     } catch (err) {
@@ -71,4 +63,4 @@ import LogsModel from "../schemas/logs-model";
 
 }
 
-export default  new LogsRepository();
+export default new LogsRepository();

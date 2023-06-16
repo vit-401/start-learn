@@ -1,9 +1,9 @@
 import UserModel from '../schemas/user-model';
 import {User} from "../models/user";
+import {injectable} from "inversify";
 
+@injectable()
 export default class UserRepository {
-
-
   async delete(id: string): Promise<Boolean> {
     try {
       const result = await UserModel.deleteOne({_id: id});

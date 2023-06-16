@@ -1,14 +1,15 @@
 import nodemailer from 'nodemailer';
 import SMTPTransport from "nodemailer/lib/smtp-transport";
 import {User} from "../models/user";
+import {injectable} from "inversify";
 
 const PASSWORDAPP = "dbasxiqxxjpqgyfx"
 
-
+@injectable()
 export class EmailService {
   private transporter: nodemailer.Transporter;
 
-  constructor(config: SMTPTransport | SMTPTransport.Options | string,) {
+  constructor(protected config: SMTPTransport | SMTPTransport.Options | string,) {
     this.transporter = nodemailer.createTransport(config);
   }
 

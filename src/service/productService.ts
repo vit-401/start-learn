@@ -1,12 +1,11 @@
 import ProductRepository from "../repository/productRepository";
 import {Product} from "../models/product";
+import {inject, injectable} from "inversify";
 
-
+@injectable()
 export class ProductService {
-  private productRepository: ProductRepository
 
-  constructor(productRepository: ProductRepository) {
-    this.productRepository = productRepository
+  constructor( protected productRepository: ProductRepository) {
   }
 
   // Create a new product and add it to the repository

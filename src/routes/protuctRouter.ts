@@ -1,9 +1,11 @@
 import {Router} from "express";
 import validateTitleAndPrice from "../middleware/validateTitleAndPrice";
-import {productController} from "../compositions/product-composition";
+import {container} from "../root-compositions";
+import {ProductController} from "../controllers/products-controller";
 
 const router = Router({})
 const productsRoute = () => {
+  const productController = container.resolve(ProductController)
 
   router.get('/:id', productController.getById.bind(productController))
   router.get('/', productController.getAll.bind(productController))

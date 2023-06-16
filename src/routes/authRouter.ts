@@ -1,8 +1,11 @@
 import express from "express";
-import {authController} from "../compositions/auth-compositions";
+import {container} from "../root-compositions";
+import {AuthController} from "../controllers/authController";
 
 
 export function authRouter() {
+  const authController = container.resolve(AuthController)
+
   const router = express.Router();
   router.post('/login', authController.login.bind(authController));
   router.post('/refresh-token', authController.refreshToken.bind(authController))

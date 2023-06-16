@@ -1,9 +1,11 @@
 import UserService from "../service/userService";
 import express from "express";
 import {CodeResponsesEnum} from "../utils/constants";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class UserController {
-  constructor(protected userService: UserService) {
+  constructor(@inject(UserService) private userService: UserService) {
   }
 
   async delete(req: express.Request, res: express.Response, next: express.NextFunction) {

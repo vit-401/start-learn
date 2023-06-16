@@ -1,18 +1,17 @@
 import {ObjectId} from 'mongodb';
 import {RefreshTokenMetadata} from "../models/aurh";
 import {AuthMetadataModel} from "../schemas/authMetadata-model";
+import {injectable} from "inversify";
 
-
+@injectable()
 export default class AuthRepository {
-  private collection?: typeof AuthMetadataModel;
 
   constructor() {
-    this.collection = AuthMetadataModel;
   }
 
   async findDeviceIdByDeviceId(deviceId: string): Promise<RefreshTokenMetadata> {
     try {
-      const refreshTokenMetadata = await this.collection?.findOne({deviceId: deviceId})
+      const refreshTokenMetadata = await AuthMetadataModel?.findOne({deviceId: deviceId})
       if (!refreshTokenMetadata) throw new Error('Failed to find DeviceId by deviceId');
       return refreshTokenMetadata
     } catch (err) {
@@ -23,7 +22,7 @@ export default class AuthRepository {
 
   async findByUserId(userId: string): Promise<RefreshTokenMetadata | null> {
     try {
-      const refreshTokenMetadata = await this.collection?.findOne({userId: new ObjectId(userId)})
+      const refreshTokenMetadata = await AuthMetadataModel?.findOne({userId: new ObjectId(userId)})
       return refreshTokenMetadata ?? null;
     } catch (err) {
       console.error(`Failed to find refresh token metadata by user id '${userId}': ${err}`);
@@ -33,7 +32,7 @@ export default class AuthRepository {
 
   async findRefreshTokenMetadataByIssuedAt(issuedAt: number): Promise<RefreshTokenMetadata | null> {
     try {
-      const refreshTokenMetadata = await this.collection?.findOne({issuedAt: issuedAt})
+      const refreshTokenMetadata = await AuthMetadataModel?.findOne({issuedAt: issuedAt})
       return refreshTokenMetadata ?? null;
     } catch (err) {
       console.error(`Failed to find refresh token metadata by user id '${issuedAt}': ${err}`);
@@ -44,7 +43,7 @@ export default class AuthRepository {
 
   async create(refreshTokenMetadata: RefreshTokenMetadata): Promise<boolean> {
     try {
-      const result = await this.collection?.insertMany([refreshTokenMetadata]);
+      const result = await AuthMetadataModel?.insertMany([refreshTokenMetadata]);
       if (!result) throw new Error('Failed to create refresh token metadata');
       return true;
     } catch (err) {
@@ -55,7 +54,7 @@ export default class AuthRepository {
 
   async update(refreshTokenMetadata: RefreshTokenMetadata): Promise<boolean> {
     try {
-      const result = await this.collection?.updateOne({userId: refreshTokenMetadata.userId}, {$set: refreshTokenMetadata})
+      const result = await AuthMetadataModel?.updateOne({userId: refreshTokenMetadata.userId}, {$set: refreshTokenMetadata})
       if (!result) throw new Error('Failed to update refresh token metadata');
       return true;
     } catch (err) {

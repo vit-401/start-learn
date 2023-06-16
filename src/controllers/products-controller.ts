@@ -1,8 +1,10 @@
 import {ProductService} from "../service/productService";
 import {NextFunction, Request, Response} from "express";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class ProductController {
-  constructor(protected productService: ProductService) {
+  constructor(  private productService: ProductService) {
   }
 
   async getById(req: Request, res: Response) {

@@ -1,15 +1,13 @@
 import {Product} from "../models/product";
 import {ObjectId} from "mongodb";
 import {ProductModel} from "../schemas/product-model";
+import {injectable} from "inversify";
 
-
+@injectable()
 export default class ProductRepository {
-
-
   // Create a new product and add it to the repository
   async createProduct(product: Product): Promise<Product> {
     const existingProduct = await ProductModel.find({title: product.title});
-    console.log()
     if (existingProduct.length) {
       throw new Error('Product already exists');
     }

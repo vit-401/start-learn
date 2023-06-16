@@ -2,11 +2,11 @@ import UserService from "../service/userService";
 import express from "express";
 import {DataUserType} from "../models/user";
 import {CodeResponsesEnum} from "../utils/constants";
+import {inject, injectable} from "inversify";
 
-
+@injectable()
 export class AuthController {
-  constructor(protected userService: UserService) {
-    this.userService = userService;
+  constructor(@inject(UserService) private userService: UserService) {
   }
 
   async login(req: express.Request, res: express.Response, next: express.NextFunction) {

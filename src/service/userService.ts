@@ -4,17 +4,20 @@ import UserRepository from "../repository/userRepository";
 import {JwtReturnData, jwtService} from "../jwt-service";
 import {emailService} from "./emailService";
 import {v1} from "uuid";
-import {WithId} from "mongodb";
+import {inject, injectable} from "inversify";
 
 const saltRounds = 10;
 
+
+@injectable()
 export default class UserService {
-  constructor(private userRepository: UserRepository) {
+  constructor(@inject(UserRepository) private userRepository: UserRepository) {
   }
-async delete(id: string): Promise<Boolean> {
+
+  async delete(id: string): Promise<Boolean> {
     const result = await this.userRepository.delete(id);
     return result;
-}
+  }
 
   async logout(email: string): Promise<User> {
     const user = await this.userRepository.findByEmail(email);
