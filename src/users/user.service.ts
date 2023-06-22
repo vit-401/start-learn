@@ -1,13 +1,14 @@
 import { UserRepository } from "./user.repository";
 import { Injectable } from "@nestjs/common";
-import { PostUserDto, UserType } from "./dtos/dto";
+import { PostUserTSType, UserTSType } from "./type/user";
+import { UserPostDto } from "./dtos/UserPostDto";
 
 @Injectable()
 export class UserService {
   constructor(protected userRepository: UserRepository) {
   }
 
-  async create(user: UserType) {
+  async create(user: UserPostDto) {
     return this.userRepository.create(user);
   }
 
@@ -19,7 +20,7 @@ export class UserService {
     return this.userRepository.findOne(id);
   }
 
-  async update(id: string, updateUserDto: PostUserDto) {
+  async update(id: string, updateUserDto: PostUserTSType) {
     // return this.userRepository.update(id, updateUserDto);
   }
 

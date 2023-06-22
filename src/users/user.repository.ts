@@ -1,13 +1,12 @@
-import { UserType } from "./dtos/dto";
-
 import { Injectable } from "@nestjs/common";
-import { Model } from "mongoose";
 import { InjectModel } from "@nestjs/mongoose";
-import { User, UserDocument } from "./entities/user.entity";
+import { User, UserModelType } from "./entities/user.entity";
+import { UserTSType } from "./type/user";
+import { UserPostDto } from "./dtos/UserPostDto";
 
 @Injectable()
 export class UserRepository {
-  constructor(@InjectModel(User.name) private UserModel: Model<UserDocument>) {
+  constructor(@InjectModel(User.name) private UserModel: UserModelType) {
   }
 
   async delete(id: string): Promise<Boolean> {
@@ -20,7 +19,7 @@ export class UserRepository {
     }
   }
 
-  async findByConfirmationCode(confirmationCode: string): Promise<UserType | null> {
+  async findByConfirmationCode(confirmationCode: string): Promise<UserTSType | null> {
     try {
       const user = await this.UserModel.findOne({ "emailConfirmation.confirmationCode": confirmationCode });
       return user ?? null;
@@ -30,7 +29,7 @@ export class UserRepository {
     }
   }
 
-  async update(user: UserType): Promise<UserType> {
+  async update(user: UserTSType): Promise<UserTSType> {
     try {
       await this.UserModel.updateOne({ _id: user._id }, user);
       return user;
@@ -40,7 +39,7 @@ export class UserRepository {
     }
   }
 
-  async findOne(id: string): Promise<UserType | null> {
+  async findOne(id: string): Promise<UserTSType | null> {
     try {
       const user = await this.UserModel.findOne({ _id: id });
       return user ?? null;
@@ -54,7 +53,7 @@ export class UserRepository {
     return this.UserModel.find();
   }
 
-  async findByEmail(email: string): Promise<UserType | null> {
+  async findByEmail(email: string): Promise<UserTSType | null> {
     try {
       const user = await this.UserModel.findOne({ "accountData.email": email });
       return user ?? null;
@@ -64,12 +63,14 @@ export class UserRepository {
     }
   }
 
-  async create(user: UserType): Promise<UserType> {
+  async create(user: UserPostDto): Promise<UserTSType> {
     try {
-      const userExists = await this.findByEmail(user.accountData.email);
-      if (userExists) throw new Error(`User with email '${user.accountData.email}' already exists`);
+
+      if (await this.UserModel.isUserExisting(user.email)) throw new Error(`User with email '${user.email}' already exists`);
 
       const createdUser = await this.UserModel.create(user);
+      // const test = await this.UserModel.save(createdUser);
+      console.log(createdUser);
       return createdUser;
     } catch (err) {
       return Promise.reject(err);

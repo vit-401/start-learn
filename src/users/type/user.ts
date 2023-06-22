@@ -1,14 +1,12 @@
 import { Types } from "mongoose";
 
-export type PostUserDto = {
+export type PostUserTSType = {
   email: string,
   name: string,
   age: number
   id?: number
 }
-
-
-export type UserType = {
+export type UserTSType = {
   _id?: Types.ObjectId;
   accountData: {
     email: string,
